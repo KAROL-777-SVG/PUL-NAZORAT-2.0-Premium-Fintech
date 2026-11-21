@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+  <title>PUL NAZORAT 2.0 — Premium Fintech</title>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* ========== GLOBAL DESIGN SYSTEM ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    :root {
+      --bg: #080B12;
+      --secondary: #101722;
+      --card: #151F2D;
+      --primary: #00E5A0;
+      --danger: #FF5364;
+      --text: #FFFFFF;
+      --muted: #8B98A9;
+      --border: rgba(255, 255, 255, 0.06);
+      --glass: rgba(21, 31, 45, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      --font-mono: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--secondary); }
+    ::-webkit-scrollbar-thumb { background: #2A3A4E; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+    /* ========== LAYOUT ========== */
+    .app {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: 260px;
+      background: var(--secondary);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      transition: var(--transition);
+      backdrop-filter: blur(20px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px 28px 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--primary), #00b37e);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 18px; color: #080B12;
+      box-shadow: 0 0 20px rgba(0, 229, 160, 0.3);
+    }
+
+    .logo-text {
+      font-size: 18px; font-weight: 700; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff, var(--primary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: var(--radius-sm);
+      color: var(--muted); font-weight: 500; font-size: 14px;
+      cursor: pointer; transition: var(--transition);
+      margin-bottom: 4px; position: relative;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(0, 229, 160, 0.06);
+      color: var(--text);
+      transform: translateX(4px);
+    }
+
+    .nav-item.active {
+      background: rgba(0, 229, 160, 0.1);
+      color: var(--primary);
+      border-color: rgba(0, 229, 160, 0.2);
+      box-shadow: 0 0 20px rgba(0, 229, 160, 0.05);
+    }
+
+    .nav-item i { width: 20px; height: 20px; }
+
+    .sidebar-footer {
+      margin-top: auto; padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .btn-icon {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); padding: 10px 12px;
+      border-radius: var(--radius-sm); cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; transition: var(--transition);
+      width: 100%; text-align: left;
+    }
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main {
+      flex: 1;
+      margin-left: 260px;
+      padding: 24px 32px 40px;
+      transition: var(--transition);
+      min-height: 100vh;
+    }
+
+    /* ========== HEADER ========== */
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+    }
+
+    .header h1 {
+      font-size: 26px; font-weight: 700; letter-spacing: -0.8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .header-actions {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+
+    /* ========== GLASS CARDS ========== */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      backdrop-filter: blur(20px);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      border-color: rgba(0, 229, 160, 0.2);
+      box-shadow: 0 8px 40px rgba(0, 229, 160, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .card-glass {
+      background: var(--glass);
+      backdrop-filter: blur(24px);
+    }
+
+    /* ========== STAT GRID ========== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover::before { opacity: 1; }
+    .stat-card:hover {
+      border-color: rgba(0, 229, 160, 0.2);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--muted); font-weight: 600; margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 24px; font-weight: 700; letter-spacing: -0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-value.positive { color: var(--primary); }
+    .stat-value.negative { color: var(--danger); }
+    .stat-value.muted { color: var(--muted); }
+
+    .stat-sub {
+      font-size: 12px; color: var(--muted); margin-top: 4px;
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 10px 20px;
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 14px;
+      cursor: pointer; transition: var(--transition);
+      border: none; outline: none; white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #00b37e);
+      color: #080B12;
+      box-shadow: 0 4px 20px rgba(0, 229, 160, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 229, 160, 0.35);
+    }
+
+    .btn-outline {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary); color: var(--primary);
+      background: rgba(0, 229, 160, 0.05);
+    }
+
+    .btn-danger {
+      background: rgba(255, 83, 100, 0.15);
+      color: var(--danger); border: 1px solid rgba(255, 83, 100, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 83, 100, 0.25);
+    }
+
+    .btn-sm { padding: 6px 14px; font-size: 12px; }
+
+    /* ========== FORMS ========== */
+    .form-group {
+      display: flex; flex-direction: column; gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+
+    .form-control {
+      background: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 229, 160, 0.1);
+    }
+
+    .form-control::placeholder { color: #4A5A6E; }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238B98A9' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    /* ========== MODAL ========== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(8, 11, 18, 0.8);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      opacity: 0; pointer-events: none;
+      transition: var(--transition);
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1; pointer-events: all;
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      width: 100%; max-width: 480px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(20px) scale(0.98);
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 { font-size: 18px; font-weight: 700; }
+
+    .modal-close {
+      background: transparent; border: none; color: var(--muted);
+      cursor: pointer; padding: 4px; border-radius: 8px;
+      transition: var(--transition); display: flex;
+    }
+
+    .modal-close:hover { color: var(--danger); background: rgba(255, 83, 100, 0.1); }
+
+    .modal-actions {
+      display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end;
+    }
+
+    /* ========== TOAST ========== */
+    .toast-container {
+      position: fixed; bottom: 24px; right: 24px;
+      display: flex; flex-direction: column; gap: 10px;
+      z-index: 2000; max-width: 340px;
+    }
+
+    .toast {
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      font-size: 13px;
+      backdrop-filter: blur(20px);
+    }
+
+    .toast.error { border-left-color: var(--danger); }
+    .toast.warning { border-left-color: #FFB347; }
+    .toast i { flex-shrink: 0; }
+
+    @keyframes slideIn {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ========== TABLE ========== */
+    .table-wrap {
+      overflow-x: auto; border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13px; min-width: 600px;
+    }
+
+    thead {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    th {
+      text-align: left; padding: 12px 14px;
+      font-weight: 600; color: var(--muted);
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tbody tr { transition: var(--transition); }
+    tbody tr:hover { background: rgba(0, 229, 160, 0.03); }
+
+    .tx-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+
+    .tx-icon.income { background: rgba(0, 229, 160, 0.12); color: var(--primary); }
+    .tx-icon.expense { background: rgba(255, 83, 100, 0.12); color: var(--danger); }
+
+    /* ========== BADGES ========== */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+
+    .badge-income { background: rgba(0, 229, 160, 0.12); color: var(--primary); }
+    .badge-expense { background: rgba(255, 83, 100, 0.12); color: var(--danger); }
+
+    /* ========== PROGRESS ========== */
+    .progress-bar {
+      width: 100%; height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px; overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%; border-radius: 10px;
+      background: linear-gradient(90deg, var(--primary), #00b37e);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .progress-fill.warning { background: linear-gradient(90deg, #FFB347, #ff8c00); }
+    .progress-fill.danger { background: linear-gradient(90deg, var(--danger), #cc2233); }
+
+    /* ========== CHART CONTAINERS ========== */
+    .chart-container {
+      position: relative; height: 260px;
+      width: 100%; margin-top: 12px;
+    }
+
+    .chart-container.sm { height: 200px; }
+
+    /* ========== GRID LAYOUTS ========== */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* ========== UTILITY ========== */
+    .flex { display: flex; }
+    .flex-between { display: flex; align-items: center; justify-content: space-between; }
+    .flex-center { display: flex; align-items: center; justify-content: center; }
+    .gap-8 { gap: 8px; }
+    .gap-12 { gap: 12px; }
+    .gap-16 { gap: 16px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .mb-8 { margin-bottom: 8px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mb-24 { margin-bottom: 24px; }
+    .text-muted { color: var(--muted); }
+    .text-primary { color: var(--primary); }
+    .text-danger { color: var(--danger); }
+    .text-sm { font-size: 12px; }
+    .text-xs { font-size: 11px; }
+    .font-bold { font-weight: 700; }
+    .nowrap { white-space: nowrap; }
+    .w-full { width: 100%; }
+    .hidden { display: none !important; }
+
+    /* ========== PAGE SECTIONS ========== */
+    .page { display: none; animation: fadeUp 0.4s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== MOBILE MENU ========== */
+    .mobile-toggle {
+      display: none;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); padding: 10px; border-radius: var(--radius-sm);
+      cursor: pointer; position: fixed; bottom: 24px; right: 24px;
+      z-index: 200; box-shadow: var(--shadow);
+    }
+
+    .mobile-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+      z-index: 90; opacity: 0; transition: var(--transition);
+    }
+
+    .mobile-overlay.active { display: block; opacity: 1; }
+
+    /* ========== EMPTY STATE ========== */
+    .empty-state {
+      text-align: center; padding: 48px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state i { margin-bottom: 12px; opacity: 0.4; }
+    .empty-state p { font-size: 14px; }
+
+    /* ========== ANIMATED COUNTER ========== */
+    .counter { font-variant-numeric: tabular-nums; }
+
+    /* ========== MOUSE LIGHT ========== */
+    .mouse-light {
+      position: fixed; pointer-events: none;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 229, 160, 0.04) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      z-index: 0; transition: opacity 0.3s;
+      top: 0; left: 0;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; padding: 20px 16px 80px; }
+      .mobile-toggle { display: flex; }
+    }
+
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-value { font-size: 18px; }
+      .stat-card { padding: 14px; }
+      .header h1 { font-size: 20px; }
+      .card { padding: 16px; }
+      .modal { padding: 20px; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 400px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mouse light -->
+  <div class="mouse-light" id="mouseLight"></div>
+
+  <!-- Mobile overlay -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-icon">₽</div>
+      <div class="logo-text">PUL NAZORAT</div>
+    </div>
+
+    <nav id="mainNav">
+      <div class="nav-item active" data-page="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+      <div class="nav-item" data-page="transactions"><i data-lucide="arrow-left-right"></i> Operatsiyalar</div>
+      <div class="nav-item" data-page="expenses"><i data-lucide="shopping-bag"></i> Xarajatlar</div>
+      <div class="nav-item" data-page="incomes"><i data-lucide="banknote"></i> Daromadlar</div>
+      <div class="nav-item" data-page="statistics"><i data-lucide="bar-chart-3"></i> Statistika</div>
+      <div class="nav-item" data-page="budget"><i data-lucide="target"></i> Byudjet</div>
+      <div class="nav-item" data-page="savings"><i data-lucide="piggy-bank"></i> Jamg'arma</div>
+      <div class="nav-item" data-page="analytics"><i data-lucide="brain"></i> Smart Analyst</div>
+      <div class="nav-item" data-page="reports"><i data-lucide="file-text"></i> Hisobotlar</div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-icon" id="btnDemoData"><i data-lucide="sparkles"></i> Demo ma'lumot</button>
+      <button class="btn-icon" id="btnClearData"><i data-lucide="trash-2"></i> Ma'lumotlarni tozalash</button>
+      <button class="btn-icon" id="btnBackup"><i data-lucide="download"></i> JSON Backup</button>
+      <button class="btn-icon" id="btnRestore"><i data-lucide="upload"></i> JSON Tiklash</button>
+      <input type="file" id="restoreInput" accept=".json" style="display:none;">
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="main">
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="header">
+        <h1><i data-lucide="layout-dashboard" style="color:var(--primary);"></i> Dashboard</h1>
+        <div class="header-actions">
+          <span class="text-sm text-muted" id="currentDate"></span>
+          <button class="btn btn-primary" id="quickAddBtn"><i data-lucide="plus"></i> Operatsiya</button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="dashboardStats"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="flex-between mb-16">
+            <h3 class="text-sm font-bold">Haftalik xarajatlar</h3>
+            <span class="text-xs text-muted">Joriy hafta</span>
+          </div>
+          <div class="chart-container sm">
+            <canvas id="weeklyChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="flex-between mb-16">
+            <h3 class="text-sm font-bold">Oylik xarajatlar</h3>
+            <span class="text-xs text-muted">Joriy oy</span>
+          </div>
+          <div class="chart-container sm">
+            <canvas id="monthlyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 class="text-sm font-bold mb-16">Kategoriyalar bo'yicha</h3>
+          <div class="chart-container sm">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="text-sm font-bold mb-16">Oxirgi operatsiyalar</h3>
+          <div id="recentTxList"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 class="text-sm font-bold mb-16">Insights</h3>
+          <div id="dashboardInsights"></div>
+        </div>
+        <div class="card">
+          <h3 class="text-sm font-bold mb-16">Jamg'arma progressi</h3>
+          <div id="dashboardSavings"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TRANSACTIONS ===== -->
+    <div class="page" id="page-transactions">
+      <div class="header">
+        <h1><i data-lucide="arrow-left-right" style="color:var(--primary);"></i> Operatsiyalar</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="addTxBtn"><i data-lucide="plus"></i> Yangi</button>
+        </div>
+      </div>
+
+      <div class="card mb-24">
+        <div class="flex gap-12 flex-wrap" style="flex-wrap:wrap;">
+          <input type="text" class="form-control" id="txSearch" placeholder="Qidirish..." style="max-width:220px;">
+          <select class="form-control" id="txFilterType" style="max-width:160px;">
+            <option value="all">Barcha turlar</option>
+            <option value="income">Daromad</option>
+            <option value="expense">Xarajat</option>
+          </select>
+          <select class="form-control" id="txFilterCategory" style="max-width:180px;">
+            <option value="all">Barcha kategoriyalar</option>
+          </select>
+          <input type="date" class="form-control" id="txFilterDate" style="max-width:160px;">
+          <button class="btn btn-outline btn-sm" id="txClearFilters">Tozalash</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nomi</th>
+                <th>Kategoriya</th>
+                <th>Summa</th>
+                <th>Turi</th>
+                <th>Sana</th>
+                <th style="text-align:right;">Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="txTableBody"></tbody>
+          </table>
+        </div>
+        <div id="txPagination" class="flex-between mt-16"></div>
+      </div>
+    </div>
+
+    <!-- ===== EXPENSES ===== -->
+    <div class="page" id="page-expenses">
+      <div class="header">
+        <h1><i data-lucide="shopping-bag" style="color:var(--danger);"></i> Xarajatlar</h1>
+        <button class="btn btn-primary" id="addExpenseBtn"><i data-lucide="plus"></i> Xarajat qo'shish</button>
+      </div>
+      <div class="stats-grid" id="expenseStats"></div>
+      <div class="card">
+        <h3 class="text-sm font-bold mb-16">Barcha xarajatlar</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Nomi</th><th>Kategoriya</th><th>Summa</th><th>Sana</th><th style="text-align:right;">Amallar</th></tr>
+            </thead>
+            <tbody id="expenseTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INCOMES ===== -->
+    <div class="page" id="page-incomes">
+      <div class="header">
+        <h1><i data-lucide="banknote" style="color:var(--primary);"></i> Daromadlar</h1>
+        <button class="btn btn-primary" id="addIncomeBtn"><i data-lucide="plus"></i> Daromad qo'shish</button>
+      </div>
+      <div class="stats-grid" id="incomeStats"></div>
+      <div class="card">
+        <h3 class="text-sm font-bold mb-16">Barcha daromadlar</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Nomi</th><th>Manba</th><th>Summa</th><th>Sana</th><th style="text-align:right;">Amallar</th></tr>
+            </thead>
+            <tbody id="incomeTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STATISTICS ===== -->
+    <div class="page" id="page-statistics">
+      <div class="header">
+        <h1><i data-lucide="bar-chart-3" style="color:var(--primary);"></i> Statistika</h1>
+      </div>
+
+      <div class="flex gap-8 mb-24" style="flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm stat-period active" data-period="daily">Kunlik</button>
+        <button class="btn btn-outline btn-sm stat-period" data-period="weekly">Haftalik</button>
+        <button class="btn btn-outline btn-sm stat-period" data-period="monthly">Oylik</button>
+        <button class="btn btn-outline btn-sm stat-period" data-period="yearly">Yillik</button>
+      </div>
+
+      <div class="stats-grid" id="statStats"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 class="text-sm font-bold mb-16">Xarajatlar dinamikasi</h3>
+          <div class="chart-container">
+            <canvas id="statChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="text-sm font-bold mb-16">Kategoriyalar taqsimoti</h3>
+          <div class="chart-container">
+            <canvas id="statCategoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BUDGET ===== -->
+    <div class="page" id="page-budget">
+      <div class="header">
+        <h1><i data-lucide="target" style="color:var(--primary);"></i> Byudjet</h1>
+        <button class="btn btn-primary" id="addBudgetBtn"><i data-lucide="plus"></i> Byudjet qo'shish</button>
+      </div>
+      <div class="grid-2" id="budgetList"></div>
+    </div>
+
+    <!-- ===== SAVINGS ===== -->
+    <div class="page" id="page-savings">
+      <div class="header">
+        <h1><i data-lucide="piggy-bank" style="color:var(--primary);"></i> Jamg'arma</h1>
+        <button class="btn btn-primary" id="addSavingsBtn"><i data-lucide="plus"></i> Maqsad qo'shish</button>
+      </div>
+      <div class="grid-2" id="savingsList"></div>
+    </div>
+
+    <!-- ===== ANALYTICS ===== -->
+    <div class="page" id="page-analytics">
+      <div class="header">
+        <h1><i data-lucide="brain" style="color:var(--primary);"></i> Smart Analyst</h1>
+      </div>
+      <div id="analyticsContent"></div>
+    </div>
+
+    <!-- ===== REPORTS ===== -->
+    <div class="page" id="page-reports">
+      <div class="header">
+        <h1><i data-lucide="file-text" style="color:var(--primary);"></i> Hisobotlar</h1>
+      </div>
+      <div class="card mb-24">
+        <h3 class="text-sm font-bold mb-16">Sana oralig'i</h3>
+        <div class="flex gap-12 flex-wrap">
+          <input type="date" class="form-control" id="reportFrom" style="max-width:180px;">
+          <input type="date" class="form-control" id="reportTo" style="max-width:180px;">
+          <button class="btn btn-primary" id="btnGenerateReport">Hisobot yaratish</button>
+        </div>
+      </div>
+      <div class="flex gap-12 mb-24" style="flex-wrap:wrap;">
+        <button class="btn btn-outline" id="btnExportCSV"><i data-lucide="download"></i> CSV eksport</button>
+        <button class="btn btn-outline" id="btnPrintReport"><i data-lucide="printer"></i> Chop etish</button>
+      </div>
+      <div class="card" id="reportPreview">
+        <p class="text-muted text-sm">Hisobot yaratish uchun sana oralig'ini tanlang.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mobile toggle -->
+  <button class="mobile-toggle" id="mobileToggle"><i data-lucide="menu"></i></button>
+
+  <!-- ========== MODAL ========== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalContent"></div>
+  </div>
+
+  <!-- ========== TOAST ========== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    /* ============================================================
+       PUL NAZORAT 2.0 — Ultimate Professional Fintech Platform
+       Single-file Vanilla JS implementation
+       ============================================================ */
+
+    // ========== UTILS ==========
+    const UZS = new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const fmt = (n) => UZS.format(n).replace('UZS', '').trim() + ' so\'m';
+    const fmtShort = (n) => {
+      const abs = Math.abs(n);
+      if (abs >= 1e9) return (n/1e9).toFixed(1) + ' mlrd';
+      if (abs >= 1e6) return (n/1e6).toFixed(1) + ' mln';
+      if (abs >= 1e3) return (n/1e3).toFixed(1) + ' ming';
+      return n.toString();
+    };
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    const todayStr = () => new Date().toISOString().slice(0, 10);
+    const nowTime = () => new Date().toTimeString().slice(0, 5);
+    const startOfWeek = (d) => {
+      const dt = new Date(d);
+      const day = dt.getDay();
+      const diff = dt.getDate() - day + (day === 0 ? -6 : 1);
+      return new Date(dt.setDate(diff));
+    };
+    const startOfMonth = (d) => new Date(d.getFullYear(), d.getMonth(), 1);
+    const startOfYear = (d) => new Date(d.getFullYear(), 0, 1);
+    const dateEq = (a, b) => a.slice(0,10) === b.slice(0,10);
+    const daysBetween = (a, b) => Math.round((b - a) / 864e5);
+
+    // ========== CATEGORIES ==========
+    const EXPENSE_CATS = [
+      { id: 'oziq-ovqat', name: 'Oziq-ovqat', icon: 'utensils', color: '#FFB347' },
+      { id: 'dokon', name: "Do'kon", icon: 'shopping-cart', color: '#FF8C42' },
+      { id: 'transport', name: 'Transport', icon: 'car', color: '#4ECDC4' },
+      { id: 'kiyim', name: 'Kiyim-kechak', icon: 'shirt', color: '#A78BFA' },
+      { id: 'talim', name: "Ta'lim", icon: 'graduation-cap', color: '#60A5FA' },
+      { id: 'soglik', name: "Sog'liq", icon: 'heart-pulse', color: '#F87171' },
+      { id: 'uy-joy', name: 'Uy-joy', icon: 'home', color: '#34D399' },
+      { id: 'internet', name: 'Internet', icon: 'wifi', color: '#38BDF8' },
+      { id: 'kongilochar', name: "Ko'ngilochar", icon: 'gamepad-2', color: '#F472B6' },
+      { id: 'boshqa', name: 'Boshqa', icon: 'ellipsis', color: '#8B98A9' },
+    ];
+
+    const INCOME_CATS = [
+      { id: 'maosh', name: 'Maosh', icon: 'briefcase', color: '#00E5A0' },
+      { id: 'sovga', name: "Sovg'a", icon: 'gift', color: '#60A5FA' },
+      { id: 'biznes', name: 'Biznes', icon: 'trending-up', color: '#34D399' },
+      { id: 'qoshimcha', name: "Qo'shimcha", icon: 'plus-circle', color: '#A78BFA' },
+      { id: 'boshqa-daromad', name: 'Boshqa', icon: 'ellipsis', color: '#8B98A9' },
+    ];
+
+    const catMap = {};
+    [...EXPENSE_CATS, ...INCOME_CATS].forEach(c => { catMap[c.id] = c; });
+
+    // ========== STORAGE ==========
+    const STORAGE_KEY = 'pulnazorat_v2';
+
+    function defaultState() {
+      return {
+        transactions: [],
+        budgets: [],
+        savings: [],
+        settings: { startingBalance: 0 },
+      };
+    }
+
+    let state = defaultState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.transactions)) {
+            state = { ...defaultState(), ...parsed };
+          }
+        }
+      } catch (e) {
+        console.warn('Load error', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        toast('Saqlashda xatolik yuz berdi', 'error');
+      }
+    }
+
+    // ========== CALCULATIONS ==========
+    function getIncomeTotal() {
+      return state.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    }
+    function getExpenseTotal() {
+      return state.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    }
+    function getBalance() {
+      return state.settings.startingBalance + getIncomeTotal() - getExpenseTotal();
+    }
+    function getTodayIncome() {
+      const d = todayStr();
+      return state.transactions.filter(t => t.type === 'income' && t.date === d).reduce((s, t) => s + t.amount, 0);
+    }
+    function getTodayExpense() {
+      const d = todayStr();
+      return state.transactions.filter(t => t.type === 'expense' && t.date === d).reduce((s, t) => s + t.amount, 0);
+    }
+    function getExpenseByCategory() {
+      const map = {};
+      state.transactions.filter(t => t.type === 'expense').forEach(t => {
+        map[t.category] = (map[t.category] || 0) + t.amount;
+      });
+      return map;
+    }
+    function getPeriodTransactions(from, to, type) {
+      return state.transactions.filter(t => {
+        const d = new Date(t.date);
+        return d >= from && d <= to && (!type || t.type === type);
+      });
+    }
+    function sumByType(txs, type) {
+      return txs.filter(t => t.type === type).reduce((s, t) => s + t.amount, 0);
+    }
+    function getDailyExpensesForWeek() {
+      const start = startOfWeek(new Date());
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(start);
+        d.setDate(d.getDate() + i);
+        const ds = d.toISOString().slice(0, 10);
+        const total = state.transactions.filter(t => t.type === 'expense' && t.date === ds).reduce((s, t) => s + t.amount, 0);
+        days.push({ label: ['Du','Se','Cho','Pay','Ju','Sha','Ya'][i], value: total });
+      }
+      return days;
+    }
+    function getMonthlyExpenses() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const days = [];
+      for (let i = 1; i <= daysInMonth; i++) {
+        const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+        const total = state.transactions.filter(t => t.type === 'expense' && t.date === ds).reduce((s, t) => s + t.amount, 0);
+        days.push({ label: i.toString(), value: total });
+      }
+      return days;
+    }
+
+    // ========== TOAST ==========
+    function toast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      const icon = type === 'error' ? 'alert-circle' : type === 'warning' ? 'alert-triangle' : 'check-circle';
+      el.innerHTML = `<i data-lucide="${icon}" style="width:18px;height:18px;color:${type==='error'?'var(--danger)':type==='warning'?'#FFB347':'var(--primary)'}"></i><span>${msg}</span>`;
+      container.appendChild(el);
+      lucide.createIcons({ nodes: [el] });
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(120%)';
+        el.style.transition = 'all 0.4s ease';
+        setTimeout(() => el.remove(), 400);
+      }, 3000);
+    }
+
+    // ========== MODAL ==========
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+
+    function openModal(html) {
+      modalContent.innerHTML = html;
+      modalOverlay.classList.add('active');
+      lucide.createIcons({ nodes: [modalContent] });
+    }
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+    }
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+
+    // ========== NAVIGATION ==========
+    let currentPage = 'dashboard';
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const page = item.dataset.page;
+        navigateTo(page);
+        if (window.innerWidth <= 1024) {
+          document.getElementById('sidebar').classList.remove('open');
+          document.getElementById('mobileOverlay').classList.remove('active');
+        }
+      });
+    });
+
+    function navigateTo(page) {
+      currentPage = page;
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const pageEl = document.getElementById('page-' + page);
+      if (pageEl) pageEl.classList.add('active');
+      const navEl = document.querySelector(`.nav-item[data-page="${page}"]`);
+      if (navEl) navEl.classList.add('active');
+      renderCurrentPage();
+    }
+
+    function renderCurrentPage() {
+      switch (currentPage) {
+        case 'dashboard': renderDashboard(); break;
+        case 'transactions': renderTransactions(); break;
+        case 'expenses': renderExpenses(); break;
+        case 'incomes': renderIncomes(); break;
+        case 'statistics': renderStatistics(); break;
+        case 'budget': renderBudget(); break;
+        case 'savings': renderSavings(); break;
+        case 'analytics': renderAnalytics(); break;
+        case 'reports': break;
+      }
+    }
+
+    // ========== RENDER: DASHBOARD ==========
+    let weeklyChartInstance, monthlyChartInstance, categoryChartInstance;
+    let statChartInstance, statCategoryChartInstance;
+
+    function renderDashboard() {
+      document.getElementById('currentDate').textContent = new Date().toLocaleDateString('uz-UZ', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+      const inc = getIncomeTotal();
+      const exp = getExpenseTotal();
+      const bal = getBalance();
+
+      document.getElementById('dashboardStats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Umumiy balans</div>
+          <div class="stat-value ${bal >= 0 ? 'positive' : 'negative'} counter">${fmt(bal)}</div>
+          <div class="stat-sub">Boshlang'ich: ${fmt(state.settings.startingBalance)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Bugungi daromad</div>
+          <div class="stat-value positive counter">${fmt(getTodayIncome())}</div>
+          <div class="stat-sub">Bugungi xarajat: ${fmt(getTodayExpense())}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Jami daromad</div>
+          <div class="stat-value positive counter">${fmt(inc)}</div>
+          <div class="stat-sub">${state.transactions.filter(t=>t.type==='income').length} ta operatsiya</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Jami xarajat</div>
+          <div class="stat-value negative counter">${fmt(exp)}</div>
+          <div class="stat-sub">${state.transactions.filter(t=>t.type==='expense').length} ta operatsiya</div>
+        </div>
+      `;
+
+      // Weekly chart
+      const weekly = getDailyExpensesForWeek();
+      const wCtx = document.getElementById('weeklyChart').getContext('2d');
+      if (weeklyChartInstance) weeklyChartInstance.destroy();
+      weeklyChartInstance = new Chart(wCtx, {
+        type: 'bar',
+        data: {
+          labels: weekly.map(w => w.label),
+          datasets: [{
+            label: 'Xarajat',
+            data: weekly.map(w => w.value),
+            backgroundColor: 'rgba(0, 229, 160, 0.6)',
+            borderColor: 'rgba(0, 229, 160, 1)',
+            borderWidth: 1,
+            borderRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8B98A9', font: { size: 11 } } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8B98A9', font: { size: 11 }, callback: v => fmtShort(v) }, beginAtZero: true }
+          }
+        }
+      });
+
+      // Monthly chart
+      const monthly = getMonthlyExpenses();
+      const mCtx = document.getElementById('monthlyChart').getContext('2d');
+      if (monthlyChartInstance) monthlyChartInstance.destroy();
+      monthlyChartInstance = new Chart(mCtx, {
+        type: 'line',
+        data: {
+          labels: monthly.map(m => m.label),
+          datasets: [{
+            label: 'Xarajat',
+            data: monthly.map(m => m.value),
+            borderColor: 'rgba(0, 229, 160, 1)',
+            backgroundColor: 'rgba(0, 229, 160, 0.08)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            borderWidth: 2,
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#8B98A9', font: { size: 10 }, maxTicksLimit: 10 } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8B98A9', font: { size: 11 }, callback: v => fmtShort(v) }, beginAtZero: true }
+          }
+        }
+      });
+
+      // Category chart
+      const catData = getExpenseByCategory();
+      const catLabels = Object.keys(catData).map(k => catMap[k]?.name || k);
+      const catValues = Object.values(catData);
+      const catColors = Object.keys(catData).map(k => catMap[k]?.color || '#8B98A9');
+      const cCtx = document.getElementById('categoryChart').getContext('2d');
+      if (categoryChartInstance) categoryChartInstance.destroy();
+      categoryChartInstance = new Chart(cCtx, {
+        type: 'doughnut',
+        data: {
+          labels: catLabels,
+          datasets: [{
+            data: catValues,
+            backgroundColor: catColors,
+            borderWidth: 0,
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#8B98A9', padding: 12, font: { size: 11 }, usePointStyle: true } }
+          },
+          cutout: '65%',
+        }
+      });
+
+      // Recent transactions
+      const recent = [...state.transactions].sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time)).slice(0, 5);
+      const rtEl = document.getElementById('recentTxList');
+      if (recent.length === 0) {
+        rtEl.innerHTML = `<div class="empty-state"><i data-lucide="inbox" style="width:32px;height:32px;"></i><p>Hali operatsiyalar yo'q</p></div>`;
+      } else {
+        rtEl.innerHTML = recent.map(t => {
+          const cat = catMap[t.category] || { name: t.category, icon: 'circle', color: '#8B98A9' };
+          return `
+            <div class="flex-between" style="padding:10px 0;border-bottom:1px solid var(--border);">
+              <div class="flex gap-12" style="align-items:center;">
+                <div class="tx-icon ${t.type}"><i data-lucide="${cat.icon}" style="width:16px;height:16px;"></i></div>
+                <div>
+                  <div style="font-weight:600;font-size:13px;">${t.name}</div>
+                  <div class="text-xs text-muted">${cat.name} · ${t.date}</div>
+                </div>
+              </div>
+              <div style="font-weight:700;font-size:13px;" class="${t.type==='income'?'text-primary':'text-danger'}">${t.type==='income'?'+':'-'}${fmtShort(t.amount)}</div>
+            </div>
+          `;
+        }).join('');
+      }
+      lucide.createIcons({ nodes: [rtEl] });
+
+      // Insights
+      const insightsEl = document.getElementById('dashboardInsights');
+      const catData2 = getExpenseByCategory();
+      const topCat = Object.entries(catData2).sort((a,b) => b[1]-a[1])[0];
+      const biggest = [...state.transactions].filter(t=>t.type==='expense').sort((a,b)=>b.amount-a.amount)[0];
+      const avgDaily = state.transactions.filter(t=>t.type==='expense').length > 0
+        ? getExpenseTotal() / Math.max(1, new Set(state.transactions.filter(t=>t.type==='expense').map(t=>t.date)).size)
+        : 0;
+
+      insightsEl.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${topCat ? `<div class="flex-between" style="padding:10px 0;border-bottom:1px solid var(--border);">
+            <span class="text-sm text-muted">Eng ko'p kategoriya</span>
+            <span class="badge badge-expense">${catMap[topCat[0]]?.name || topCat[0]}</span>
+          </div>` : ''}
+          ${biggest ? `<div class="flex-between" style="padding:10px 0;border-bottom:1px solid var(--border);">
+            <span class="text-sm text-muted">Eng katta xarajat</span>
+            <span class="text-sm font-bold text-danger">${fmt(biggest.amount)}</span>
+          </div>` : ''}
+          <div class="flex-between" style="padding:10px 0;">
+            <span class="text-sm text-muted">O'rtacha kunlik xarajat</span>
+            <span class="text-sm font-bold">${fmt(avgDaily)}</span>
+          </div>
+        </div>
+      `;
+
+      // Dashboard savings
+      const savEl = document.getElementById('dashboardSavings');
+      if (state.savings.length === 0) {
+        savEl.innerHTML = `<div class="empty-state"><i data-lucide="piggy-bank" style="width:32px;height:32px;"></i><p>Jamg'arma maqsadlari yo'q</p></div>`;
+      } else {
+        savEl.innerHTML = state.savings.slice(0, 3).map(s => {
+          const pct = Math.min(100, Math.round((s.collected / s.target) * 100));
+          return `
+            <div style="margin-bottom:16px;">
+              <div class="flex-between mb-8">
+                <span style="font-weight:600;font-size:13px;">${s.name}</span>
+                <span class="text-xs text-muted">${pct}%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill ${pct>=100?'':pct>=80?'warning':''}" style="width:${pct}%;"></div></div>
+              <div class="flex-between mt-8">
+                <span class="text-xs text-muted">${fmtShort(s.collected)}</span>
+                <span class="text-xs text-muted">${fmtShort(s.target)}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+      lucide.createIcons({ nodes: [savEl] });
+    }
+
+    // ========== RENDER: TRANSACTIONS ==========
+    let txPage = 1;
+    const TX_PER_PAGE = 10;
+
+    function getFilteredTx() {
+      let list = [...state.transactions];
+      const q = document.getElementById('txSearch').value.toLowerCase().trim();
+      if (q) list = list.filter(t => t.name.toLowerCase().includes(q) || (t.note||'').toLowerCase().includes(q));
+      const type = document.getElementById('txFilterType').value;
+      if (type !== 'all') list = list.filter(t => t.type === type);
+      const cat = document.getElementById('txFilterCategory').value;
+      if (cat !== 'all') list = list.filter(t => t.category === cat);
+      const date = document.getElementById('txFilterDate').value;
+      if (date) list = list.filter(t => t.date === date);
+      list.sort((a,b) => (b.date + b.time).localeCompare(a.date + a.time));
+      return list;
+    }
+
+    function renderTransactions() {
+      // Populate category filter
+      const sel = document.getElementById('txFilterCategory');
+      if (sel.options.length <= 1) {
+        [...EXPENSE_CATS, ...INCOME_CATS].forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.id; o.textContent = c.name;
+          sel.appendChild(o);
+        });
+      }
+
+      const list = getFilteredTx();
+      const totalPages = Math.max(1, Math.ceil(list.length / TX_PER_PAGE));
+      if (txPage > totalPages) txPage = totalPages;
+      const start = (txPage - 1) * TX_PER_PAGE;
+      const pageItems = list.slice(start, start + TX_PER_PAGE);
+
+      const tbody = document.getElementById('txTableBody');
+      if (pageItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i data-lucide="inbox" style="width:28px;height:28px;"></i><p>Operatsiyalar topilmadi</p></div></td></tr>`;
+      } else {
+        tbody.innerHTML = pageItems.map(t => {
+          const cat = catMap[t.category] || { name: t.category, icon: 'circle', color: '#8B98A9' };
+          return `<tr>
+            <td><div class="flex gap-8" style="align-items:center;"><div class="tx-icon ${t.type}"><i data-lucide="${cat.icon}" style="width:14px;height:14px;"></i></div>${t.name}</div></td>
+            <td><span class="badge" style="background:${cat.color}22;color:${cat.color};">${cat.name}</span></td>
+            <td style="font-weight:700;" class="${t.type==='income'?'text-primary':'text-danger'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</td>
+            <td><span class="badge ${t.type==='income'?'badge-income':'badge-expense'}">${t.type==='income'?'Daromad':'Xarajat'}</span></td>
+            <td class="text-sm text-muted">${t.date} ${t.time||''}</td>
+            <td style="text-align:right;">
+              <button class="btn btn-outline btn-sm" onclick="editTx('${t.id}')" style="padding:4px 8px;margin-right:4px;"><i data-lucide="pencil" style="width:12px;height:12px;"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTx('${t.id}')" style="padding:4px 8px;"><i data-lucide="trash-2" style="width:12px;height:12px;"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      }
+      lucide.createIcons({ nodes: [tbody] });
+
+      // Pagination
+      const pagEl = document.getElementById('txPagination');
+      if (list.length > 0) {
+        pagEl.innerHTML = `
+          <span class="text-sm text-muted">${list.length} ta operatsiya · ${txPage}/${totalPages}</span>
+          <div class="flex gap-8">
+            <button class="btn btn-outline btn-sm" ${txPage<=1?'disabled':''} onclick="txPage--;renderTransactions();">Oldingi</button>
+            <button class="btn btn-outline btn-sm" ${txPage>=totalPages?'disabled':''} onclick="txPage++;renderTransactions();">Keyingi</button>
+          </div>
+        `;
+      } else {
+        pagEl.innerHTML = '';
+      }
+    }
+
+    // Bind filters
+    ['txSearch','txFilterType','txFilterCategory','txFilterDate'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => { txPage = 1; renderTransactions(); });
+    });
+    document.getElementById('txClearFilters').addEventListener('click', () => {
+      document.getElementById('txSearch').value = '';
+      document.getElementById('txFilterType').value = 'all';
+      document.getElementById('txFilterCategory').value = 'all';
+      document.getElementById('txFilterDate').value = '';
+      txPage = 1;
+      renderTransactions();
+    });
+
+    // ========== RENDER: EXPENSES ==========
+    function renderExpenses() {
+      const expTx = state.transactions.filter(t => t.type === 'expense').sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time));
+      const total = expTx.reduce((s,t) => s + t.amount, 0);
+      const avg = expTx.length ? total / expTx.length : 0;
+
+      document.getElementById('expenseStats').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Jami xarajat</div><div class="stat-value negative">${fmt(total)}</div></div>
+        <div class="stat-card"><div class="stat-label">Operatsiyalar</div><div class="stat-value">${expTx.length}</div></div>
+        <div class="stat-card"><div class="stat-label">O'rtacha</div><div class="stat-value">${fmt(avg)}</div></div>
+        <div class="stat-card"><div class="stat-label">Eng katta</div><div class="stat-value negative">${fmt(expTx.length?Math.max(...expTx.map(t=>t.amount)):0)}</div></div>
+      `;
+
+      const tbody = document.getElementById('expenseTableBody');
+      if (expTx.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i data-lucide="shopping-bag" style="width:28px;height:28px;"></i><p>Xarajatlar yo'q</p></div></td></tr>`;
+      } else {
+        tbody.innerHTML = expTx.map(t => {
+          const cat = catMap[t.category] || { name: t.category, color: '#8B98A9' };
+          return `<tr>
+            <td>${t.name}</td>
+            <td><span class="badge" style="background:${cat.color}22;color:${cat.color};">${cat.name}</span></td>
+            <td class="text-danger font-bold">-${fmt(t.amount)}</td>
+            <td class="text-sm text-muted">${t.date}</td>
+            <td style="text-align:right;">
+              <button class="btn btn-outline btn-sm" onclick="editTx('${t.id}')" style="padding:4px 8px;margin-right:4px;"><i data-lucide="pencil" style="width:12px;height:12px;"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTx('${t.id}')" style="padding:4px 8px;"><i data-lucide="trash-2" style="width:12px;height:12px;"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      }
+      lucide.createIcons({ nodes: [tbody] });
+    }
+
+    // ========== RENDER: INCOMES ==========
+    function renderIncomes() {
+      const incTx = state.transactions.filter(t => t.type === 'income').sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time));
+      const total = incTx.reduce((s,t) => s + t.amount, 0);
+      const avg = incTx.length ? total / incTx.length : 0;
+
+      document.getElementById('incomeStats').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Jami daromad</div><div class="stat-value positive">${fmt(total)}</div></div>
+        <div class="stat-card"><div class="stat-label">Operatsiyalar</div><div class="stat-value">${incTx.length}</div></div>
+        <div class="stat-card"><div class="stat-label">O'rtacha</div><div class="stat-value">${fmt(avg)}</div></div>
+        <div class="stat-card"><div class="stat-label">Eng katta</div><div class="stat-value positive">${fmt(incTx.length?Math.max(...incTx.map(t=>t.amount)):0)}</div></div>
+      `;
+
+      const tbody = document.getElementById('incomeTableBody');
+      if (incTx.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i data-lucide="banknote" style="width:28px;height:28px;"></i><p>Daromadlar yo'q</p></div></td></tr>`;
+      } else {
+        tbody.innerHTML = incTx.map(t => {
+          const cat = catMap[t.category] || { name: t.category, color: '#8B98A9' };
+          return `<tr>
+            <td>${t.name}</td>
+            <td><span class="badge" style="background:${cat.color}22;color:${cat.color};">${cat.name}</span></td>
+            <td class="text-primary font-bold">+${fmt(t.amount)}</td>
+            <td class="text-sm text-muted">${t.date}</td>
+            <td style="text-align:right;">
+              <button class="btn btn-outline btn-sm" onclick="editTx('${t.id}')" style="padding:4px 8px;margin-right:4px;"><i data-lucide="pencil" style="width:12px;height:12px;"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTx('${t.id}')" style="padding:4px 8px;"><i data-lucide="trash-2" style="width:12px;height:12px;"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      }
+      lucide.createIcons({ nodes: [tbody] });
+    }
+
+    // ========== RENDER: STATISTICS ==========
+    let statPeriod = 'daily';
+
+    document.querySelectorAll('.stat-period').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.stat-period').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        statPeriod = btn.dataset.period;
+        renderStatistics();
+      });
+    });
+
+    function getPeriodRange(period) {
+      const now = new Date();
+      switch (period) {
+        case 'daily': {
+          const d = todayStr();
+          return { from: new Date(d), to: new Date(d), label: 'Bugun' };
+        }
+        case 'weekly': {
+          const from = startOfWeek(now);
+          const to = new Date(from); to.setDate(to.getDate() + 6);
+          return { from, to, label: 'Shu hafta' };
+        }
+        case 'monthly': {
+          const from = startOfMonth(now);
+          const to = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+          return { from, to, label: 'Shu oy' };
+        }
+        case 'yearly': {
+          const from = startOfYear(now);
+          const to = new Date(now.getFullYear(), 11, 31);
+          return { from, to, label: 'Shu yil' };
+        }
+      }
+    }
+
+    function getPrevPeriodRange(period) {
+      const now = new Date();
+      switch (period) {
+        case 'daily': {
+          const d = new Date(); d.setDate(d.getDate() - 1);
+          return { from: new Date(d.toISOString().slice(0,10)), to: new Date(d.toISOString().slice(0,10)) };
+        }
+        case 'weekly': {
+          const from = startOfWeek(now); from.setDate(from.getDate() - 7);
+          const to = new Date(from); to.setDate(to.getDate() + 6);
+          return { from, to };
+        }
+        case 'monthly': {
+          const from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const to = new Date(now.getFullYear(), now.getMonth(), 0);
+          return { from, to };
+        }
+        case 'yearly': {
+          const from = new Date(now.getFullYear() - 1, 0, 1);
+          const to = new Date(now.getFullYear() - 1, 11, 31);
+          return { from, to };
+        }
+      }
+    }
+
+    function renderStatistics() {
+      const range = getPeriodRange(statPeriod);
+      const prev = getPrevPeriodRange(statPeriod);
+
+      const txs = getPeriodTransactions(range.from, range.to);
+      const prevTxs = getPeriodTransactions(prev.from, prev.to);
+
+      const income = sumByType(txs, 'income');
+      const expense = sumByType(txs, 'expense');
+      const net = income - expense;
+      const avgExp = txs.filter(t=>t.type==='expense').length
+        ? expense / txs.filter(t=>t.type==='expense').length : 0;
+      const biggest = txs.filter(t=>t.type==='expense').length
+        ? Math.max(...txs.filter(t=>t.type==='expense').map(t=>t.amount)) : 0;
+      const smallest = txs.filter(t=>t.type==='expense').length
+        ? Math.min(...txs.filter(t=>t.type==='expense').map(t=>t.amount)) : 0;
+
+      const prevIncome = sumByType(prevTxs, 'income');
+      const prevExpense = sumByType(prevTxs, 'expense');
+      const incomeChange = prevIncome ? ((income - prevIncome) / prevIncome * 100) : 0;
+      const expenseChange = prevExpense ? ((expense - prevExpense) / prevExpense * 100) : 0;
+
+      document.getElementById('statStats').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Jami xarajat</div><div class="stat-value negative">${fmt(expense)}</div><div class="stat-sub ${expenseChange>0?'text-danger':'text-primary'}">${expenseChange>0?'+':''}${expenseChange.toFixed(1)}% o'tgan davrga nisbatan</div></div>
+        <div class="stat-card"><div class="stat-label">Jami daromad</div><div class="stat-value positive">${fmt(income)}</div><div class="stat-sub ${incomeChange>0?'text-primary':'text-danger'}">${incomeChange>0?'+':''}${incomeChange.toFixed(1)}% o'tgan davrga nisbatan</div></div>
+        <div class="stat-card"><div class="stat-label">Sof balans</div><div class="stat-value ${net>=0?'positive':'negative'}">${fmt(net)}</div></div>
+        <div class="stat-card"><div class="stat-label">O'rtacha xarajat</div><div class="stat-value">${fmt(avgExp)}</div></div>
+        <div class="stat-card"><div class="stat-label">Eng katta</div><div class="stat-value negative">${fmt(biggest)}</div></div>
+        <div class="stat-card"><div class="stat-label">Eng kam</div><div class="stat-value muted">${fmt(smallest)}</div></div>
+      `;
+
+      // Stat chart
+      const days = [];
+      const cur = new Date(range.from);
+      while (cur <= range.to) {
+        const ds = cur.toISOString().slice(0,10);
+        const dayExp = state.transactions.filter(t => t.type==='expense' && t.date === ds).reduce((s,t)=>s+t.amount,0);
+        days.push({ label: ds.slice(5), value: dayExp });
+        cur.setDate(cur.getDate() + 1);
+        if (days.length > 40) break;
+      }
+
+      const sCtx = document.getElementById('statChart').getContext('2d');
+      if (statChartInstance) statChartInstance.destroy();
+      statChartInstance = new Chart(sCtx, {
+        type: 'bar',
+        data: {
+          labels: days.map(d => d.label),
+          datasets: [{
+            label: 'Xarajat',
+            data: days.map(d => d.value),
+            backgroundColor: 'rgba(255, 83, 100, 0.5)',
+            borderColor: 'rgba(255, 83, 100, 1)',
+            borderWidth: 1, borderRadius: 4,
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#8B98A9', font: { size: 10 }, maxTicksLimit: 12 } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8B98A9', callback: v => fmtShort(v) }, beginAtZero: true }
+          }
+        }
+      });
+
+      // Category chart
+      const catData = {};
+      txs.filter(t=>t.type==='expense').forEach(t => { catData[t.category] = (catData[t.category]||0) + t.amount; });
+      const cCtx2 = document.getElementById('statCategoryChart').getContext('2d');
+      if (statCategoryChartInstance) statCategoryChartInstance.destroy();
+      statCategoryChartInstance = new Chart(cCtx2, {
+        type: 'polarArea',
+        data: {
+          labels: Object.keys(catData).map(k => catMap[k]?.name || k),
+          datasets: [{
+            data: Object.values(catData),
+            backgroundColor: Object.keys(catData).map(k => (catMap[k]?.color || '#8B98A9') + '99'),
+            borderWidth: 0,
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { color: '#8B98A9', padding: 10, font: { size: 10 }, usePointStyle: true } } },
+          scales: { r: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { display: false } } }
+        }
+      });
+    }
+
+    // ========== RENDER: BUDGET ==========
+    function renderBudget() {
+      const el = document.getElementById('budgetList');
+      if (state.budgets.length === 0) {
+        el.innerHTML = `<div class="card" style="grid-column:1/-1;"><div class="empty-state"><i data-lucide="target" style="width:32px;height:32px;"></i><p>Byudjetlar yo'q. Yangi byudjet qo'shing.</p></div></div>`;
+        lucide.createIcons({ nodes: [el] });
+        return;
+      }
+
+      const now = new Date();
+      const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+      el.innerHTML = state.budgets.map(b => {
+        let spent = 0;
+        if (b.category === 'all') {
+          spent = state.transactions.filter(t => t.type==='expense' && t.date.startsWith(monthStr)).reduce((s,t)=>s+t.amount,0);
+        } else {
+          spent = state.transactions.filter(t => t.type==='expense' && t.category === b.category && t.date.startsWith(monthStr)).reduce((s,t)=>s+t.amount,0);
+        }
+        const pct = Math.min(100, Math.round((spent / b.limit) * 100));
+        const status = pct >= 100 ? 'danger' : pct >= 80 ? 'warning' : '';
+        const catName = b.category === 'all' ? 'Umumiy' : (catMap[b.category]?.name || b.category);
+
+        return `
+          <div class="card">
+            <div class="flex-between mb-8">
+              <div>
+                <h4 style="font-size:15px;font-weight:700;">${catName}</h4>
+                <span class="text-xs text-muted">Oylik limit: ${fmt(b.limit)}</span>
+              </div>
+              <button class="btn btn-danger btn-sm" onclick="deleteBudget('${b.id}')" style="padding:4px 8px;"><i data-lucide="trash-2" style="width:12px;height:12px;"></i></button>
+            </div>
+            <div class="progress-bar"><div class="progress-fill ${status}" style="width:${pct}%;"></div></div>
+            <div class="flex-between mt-8">
+              <span class="text-xs ${pct>=100?'text-danger':pct>=80?'text-muted':'text-muted'}">${fmt(spent)} sarflandi</span>
+              <span class="text-xs text-muted">${pct}%</span>
+            </div>
+            ${pct >= 100 ? `<div class="text-xs text-danger mt-8">⚠ Limit tugagan!</div>` : pct >= 80 ? `<div class="text-xs mt-8" style="color:#FFB347;">⚠ Limit yaqinlashmoqda</div>` : ''}
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons({ nodes: [el] });
+    }
+
+    // ========== RENDER: SAVINGS ==========
+    function renderSavings() {
+      const el = document.getElementById('savingsList');
+      if (state.savings.length === 0) {
+        el.innerHTML = `<div class="card" style="grid-column:1/-1;"><div class="empty-state"><i data-lucide="piggy-bank" style="width:32px;height:32px;"></i><p>Jamg'arma maqsadlari yo'q.</p></div></div>`;
+        lucide.createIcons({ nodes: [el] });
+        return;
+      }
+
+      el.innerHTML = state.savings.map(s => {
+        const pct = Math.min(100, Math.round((s.collected / s.target) * 100));
+        const remaining = Math.max(0, s.target - s.collected);
+        return `
+          <div class="card">
+            <div class="flex-between mb-8">
+              <div>
+                <h4 style="font-size:15px;font-weight:700;">${s.name}</h4>
+                <span class="text-xs text-muted">Maqsad: ${fmt(s.target)}</span>
+              </div>
+              <div class="flex gap-8">
+                <button class="btn btn-outline btn-sm" onclick="addToSavings('${s.id}')" style="padding:4px 8px;"><i data-lucide="plus" style="width:12px;height:12px;"></i></button>
+                <button class="btn btn-danger btn-sm" onclick="deleteSavings('${s.id}')" style="padding:4px 8px;"><i data-lucide="trash-2" style="width:12px;height:12px;"></i></button>
+              </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill ${pct>=100?'':pct>=80?'warning':''}" style="width:${pct}%;"></div></div>
+            <div class="flex-between mt-8">
+              <span class="text-xs text-primary font-bold">${fmt(s.collected)} yig'ildi</span>
+              <span class="text-xs text-muted">${fmt(remaining)} qoldi</span>
+            </div>
+            <div class="text-xs text-muted mt-8">${pct}% bajarildi</div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons({ nodes: [el] });
+    }
+
+    // ========== RENDER: ANALYTICS ==========
+    function renderAnalytics() {
+      const el = document.getElementById('analyticsContent');
+      const exp = state.transactions.filter(t => t.type === 'expense');
+      const inc = state.transactions.filter(t => t.type === 'income');
+
+      if (exp.length === 0) {
+        el.innerHTML = `<div class="card"><div class="empty-state"><i data-lucide="brain" style="width:32px;height:32px;"></i><p>Tahlil qilish uchun xarajatlar yo'q.</p></div></div>`;
+        lucide.createIcons({ nodes: [el] });
+        return;
+      }
+
+      const catData = getExpenseByCategory();
+      const sorted = Object.entries(catData).sort((a,b) => b[1]-a[1]);
+      const topCat = sorted[0];
+      const totalExp = getExpenseTotal();
+      const avgDaily = totalExp / Math.max(1, new Set(exp.map(t=>t.date)).size);
+
+      const now = new Date();
+      const thisMonth = exp.filter(t => t.date.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`));
+      const prevMonthDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
+      const prevMonth = exp.filter(t => t.date.startsWith(`${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth()+1).padStart(2,'0')}`));
+      const thisMonthTotal = thisMonth.reduce((s,t)=>s+t.amount,0);
+      const prevMonthTotal = prevMonth.reduce((s,t)=>s+t.amount,0);
+      const monthChange = prevMonthTotal ? ((thisMonthTotal - prevMonthTotal) / prevMonthTotal * 100) : 0;
+
+      const budgetUsed = state.budgets.filter(b => b.category === 'all').map(b => {
+        const spent = thisMonth.reduce((s,t)=>s+t.amount,0);
+        return { limit: b.limit, spent };
+      })[0];
+
+      el.innerHTML = `
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="text-sm font-bold mb-16"><i data-lucide="pie-chart" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Eng ko'p xarajat</h3>
+            ${topCat ? `
+              <div class="flex-between mb-8">
+                <span class="text-sm">${catMap[topCat[0]]?.name || topCat[0]}</span>
+                <span class="text-sm font-bold text-danger">${fmt(topCat[1])}</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(topCat[1]/totalExp*100)}%;"></div></div>
+              <div class="text-xs text-muted mt-8">Jami xarajatning ${Math.round(topCat[1]/totalExp*100)}%</div>
+            ` : '<p class="text-muted text-sm">Ma\'lumot yo\'q</p>'}
+          </div>
+          <div class="card">
+            <h3 class="text-sm font-bold mb-16"><i data-lucide="trending-up" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Oylik taqqoslash</h3>
+            <div class="flex-between mb-8"><span class="text-sm">Shu oy</span><span class="text-sm font-bold">${fmt(thisMonthTotal)}</span></div>
+            <div class="flex-between mb-8"><span class="text-sm">O'tgan oy</span><span class="text-sm font-bold">${fmt(prevMonthTotal)}</span></div>
+            <div class="text-sm ${monthChange > 0 ? 'text-danger' : 'text-primary'} mt-8">
+              ${monthChange > 0 ? '↑' : '↓'} ${Math.abs(monthChange).toFixed(1)}% ${monthChange > 0 ? 'oshgan' : 'kamaygan'}
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="text-sm font-bold mb-16"><i data-lucide="calendar" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> O'rtacha kunlik</h3>
+            <div class="stat-value">${fmt(avgDaily)}</div>
+            <div class="text-xs text-muted mt-8">${new Set(exp.map(t=>t.date)).size} kunlik ma'lumot asosida</div>
+          </div>
+          <div class="card">
+            <h3 class="text-sm font-bold mb-16"><i data-lucide="target" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Byudjet holati</h3>
+            ${budgetUsed ? `
+              <div class="stat-value ${budgetUsed.spent > budgetUsed.limit ? 'negative' : 'positive'}">${fmt(budgetUsed.limit - budgetUsed.spent)}</div>
+              <div class="text-xs text-muted mt-8">${budgetUsed.spent > budgetUsed.limit ? 'Limitdan oshgan' : 'Limitdan qolgan'}</div>
+            ` : '<p class="text-muted text-sm">Umumiy byudjet belgilanmagan</p>'}
+          </div>
+        </div>
+        <div class="card mt-24">
+          <h3 class="text-sm font-bold mb-16"><i data-lucide="lightbulb" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Tejash tavsiyalari</h3>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            ${topCat && topCat[1] > totalExp * 0.3 ? `<div class="flex gap-8" style="align-items:flex-start;"><span style="color:var(--primary);">•</span><span class="text-sm">"${catMap[topCat[0]]?.name || topCat[0]}" kategoriyasiga eng ko'p pul sarflayapsiz (${fmt(topCat[1])}). Bu xarajatni kamaytirishni o'ylab ko'ring.</span></div>` : ''}
+            ${monthChange > 10 ? `<div class="flex gap-8" style="align-items:flex-start;"><span style="color:#FFB347;">•</span><span class="text-sm">Xarajatlaringiz o'tgan oyga nisbatan ${Math.abs(monthChange).toFixed(1)}% oshgan. Ehtiyot bo'ling.</span></div>` : ''}
+            ${avgDaily > 0 ? `<div class="flex gap-8" style="align-items:flex-start;"><span style="color:var(--primary);">•</span><span class="text-sm">Kunlik o'rtacha xarajatingiz ${fmt(avgDaily)}. Agar buni 10% kamaytirsangiz, oyiga ${fmt(avgDaily*30*0.1)} tejashingiz mumkin.</span></div>` : ''}
+            <div class="flex gap-8" style="align-items:flex-start;"><span style="color:var(--primary);">•</span><span class="text-sm">Daromadingizning kamida 20% ini jamg'armaga yo'naltirishga harakat qiling.</span></div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons({ nodes: [el] });
+    }
+
+    // ========== TRANSACTION CRUD ==========
+    function openTxModal(txId) {
+      const isEdit = !!txId;
+      const tx = isEdit ? state.transactions.find(t => t.id === txId) : null;
+      const type = tx ? tx.type : 'expense';
+      const cats = type === 'expense' ? EXPENSE_CATS : INCOME_CATS;
+
+      openModal(`
+        <div class="modal-header">
+          <h3>${isEdit ? 'Operatsiyani tahrirlash' : 'Yangi operatsiya'}</h3>
+          <button class="modal-close" onclick="closeModal()"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+        </div>
+        <div class="form-group">
+          <label>Turi</label>
+          <select class="form-control" id="txModalType">
+            <option value="expense" ${type==='expense'?'selected':''}>Xarajat</option>
+            <option value="income" ${type==='income'?'selected':''}>Daromad</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nomi</label>
+          <input type="text" class="form-control" id="txModalName" placeholder="Masalan: Tushlik" value="${tx?tx.name:''}">
+        </div>
+        <div class="form-group">
+          <label>Summa (so'm)</label>
+          <input type="number" class="form-control" id="txModalAmount" placeholder="0" min="1" value="${tx?tx.amount:''}">
+        </div>
+        <div class="form-group">
+          <label>Kategoriya</label>
+          <select class="form-control" id="txModalCategory">
+            ${cats.map(c => `<option value="${c.id}" ${tx&&tx.category===c.id?'selected':''}>${c.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Sana</label>
+          <input type="date" class="form-control" id="txModalDate" value="${tx?tx.date:todayStr()}">
+        </div>
+        <div class="form-group">
+          <label>Izoh (ixtiyoriy)</label>
+          <input type="text" class="form-control" id="txModalNote" placeholder="Qo'shimcha ma'lumot..." value="${tx?(tx.note||''):''}">
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="closeModal()">Bekor qilish</button>
+          <button class="btn btn-primary" id="txModalSave">${isEdit?'Saqlash':'Qo\'shish'}</button>
+        </div>
+      `);
+
+      document.getElementById('txModalType').addEventListener('change', (e) => {
+        const newCats = e.target.value === 'expense' ? EXPENSE_CATS : INCOME_CATS;
+        document.getElementById('txModalCategory').innerHTML = newCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      });
+
+      document.getElementById('txModalSave').addEventListener('click', () => {
+        const name = document.getElementById('txModalName').value.trim();
+        const amount = parseFloat(document.getElementById('txModalAmount').value);
+        const cat = document.getElementById('txModalCategory').value;
+        const date = document.getElementById('txModalDate').value;
+        const note = document.getElementById('txModalNote').value.trim();
+        const txType = document.getElementById('txModalType').value;
+
+        if (!name) return toast('Nomini kiriting', 'error');
+        if (!amount || amount <= 0) return toast('Summani kiriting', 'error');
+        if (!date) return toast('Sanani tanlang', 'error');
+
+        if (isEdit) {
+          const t = state.transactions.find(x => x.id === txId);
+          Object.assign(t, { name, amount, category: cat, date, note, type: txType });
+          toast('Operatsiya yangilandi');
+        } else {
+          state.transactions.push({
+            id: uid(), name, amount, type: txType, category: cat,
+            date, time: nowTime(), note,
+            createdAt: new Date().toISOString(),
+          });
+          toast('Operatsiya qo\'shildi');
+        }
+        saveState();
+        closeModal();
+        renderCurrentPage();
+      });
+    }
+
+    function editTx(id) { openTxModal(id); }
+    function deleteTx(id) {
+      if (!confirm('Bu operatsiyani o\'chirishni tasdiqlaysizmi?')) return;
+      state.transactions = state.transactions.filter(t => t.id !== id);
+      saveState();
+      toast('Operatsiya o\'chirildi');
+      renderCurrentPage();
+    }
+
+    // ========== BUDGET CRUD ==========
+    function openBudgetModal() {
+      const allCats = [{ id: 'all', name: 'Umumiy (barcha kategoriyalar)' }, ...EXPENSE_CATS];
+      openModal(`
+        <div class="modal-header">
+          <h3>Yangi byudjet</h3>
+          <button class="modal-close" onclick="closeModal()"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+        </div>
+        <div class="form-group">
+          <label>Kategoriya</label>
+          <select class="form-control" id="budgetCat">
+            ${allCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Oylik limit (so'm)</label>
+          <input type="number" class="form-control" id="budgetLimit" placeholder="0" min="1">
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="closeModal()">Bekor qilish</button>
+          <button class="btn btn-primary" id="budgetSave">Qo'shish</button>
+        </div>
+      `);
+
+      document.getElementById('budgetSave').addEventListener('click', () => {
+        const cat = document.getElementById('budgetCat').value;
+        const limit = parseFloat(document.getElementById('budgetLimit').value);
+        if (!limit || limit <= 0) return toast('Limitni kiriting', 'error');
+        state.budgets.push({ id: uid(), category: cat, limit });
+        saveState();
+        closeModal();
+        toast('Byudjet qo\'shildi');
+        renderBudget();
+      });
+    }
+
+    function deleteBudget(id) {
+      state.budgets = state.budgets.filter(b => b.id !== id);
+      saveState();
+      toast('Byudjet o\'chirildi');
+      renderBudget();
+    }
+
+    // ========== SAVINGS CRUD ==========
+    function openSavingsModal() {
+      openModal(`
+        <div class="modal-header">
+          <h3>Yangi jamg'arma maqsadi</h3>
+          <button class="modal-close" onclick="closeModal()"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+        </div>
+        <div class="form-group">
+          <label>Maqsad nomi</label>
+          <input type="text" class="form-control" id="savingsName" placeholder="Masalan: Yangi telefon">
+        </div>
+        <div class="form-group">
+          <label>Maqsad summasi (so'm)</label>
+          <input type="number" class="form-control" id="savingsTarget" placeholder="0" min="1">
+        </div>
+        <div class="form-group">
+          <label>Boshlang'ich yig'ilgan summa (so'm)</label>
+          <input type="number" class="form-control" id="savingsCollected" placeholder="0" min="0" value="0">
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="closeModal()">Bekor qilish</button>
+          <button class="btn btn-primary" id="savingsSave">Qo'shish</button>
+        </div>
+      `);
+
+      document.getElementById('savingsSave').addEventListener('click', () => {
+        const name = document.getElementById('savingsName').value.trim();
+        const target = parseFloat(document.getElementById('savingsTarget').value);
+        const collected = parseFloat(document.getElementById('savingsCollected').value) || 0;
+        if (!name) return toast('Nomini kiriting', 'error');
+        if (!target || target <= 0) return toast('Maqsad summasini kiriting', 'error');
+        state.savings.push({ id: uid(), name, target, collected, createdAt: new Date().toISOString() });
+        saveState();
+        closeModal();
+        toast('Jamg\'arma maqsadi qo\'shildi');
+        renderSavings();
+      });
+    }
+
+    function addToSavings(id) {
+      const s = state.savings.find(x => x.id === id);
+      if (!s) return;
+      openModal(`
+        <div class="modal-header">
+          <h3>Summa qo'shish — ${s.name}</h3>
+          <button class="modal-close" onclick="closeModal()"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+        </div>
+        <div class="form-group">
+          <label>Qo'shiladigan summa (so'm)</label>
+          <input type="number" class="form-control" id="savingsAddAmount" placeholder="0" min="1">
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="closeModal()">Bekor qilish</button>
+          <button class="btn btn-primary" id="savingsAddSave">Qo'shish</button>
+        </div>
+      `);
+
+      document.getElementById('savingsAddSave').addEventListener('click', () => {
+        const amt = parseFloat(document.getElementById('savingsAddAmount').value);
+        if (!amt || amt <= 0) return toast('Summani kiriting', 'error');
+        s.collected += amt;
+        saveState();
+        closeModal();
+        toast('Summa qo\'shildi');
+        renderSavings();
+      });
+    }
+
+    function deleteSavings(id) {
+      if (!confirm('Bu jamg\'arma maqsadini o\'chirishni tasdiqlaysizmi?')) return;
+      state.savings = state.savings.filter(s => s.id !== id);
+      saveState();
+      toast('Maqsad o\'chirildi');
+      renderSavings();
+    }
+
+    // ========== DEMO DATA ==========
+    function generateDemoData() {
+      const now = new Date();
+      const txs = [];
+      const cats = EXPENSE_CATS.map(c => c.id);
+
+      // Generate random expenses for last 60 days
+      for (let i = 0; i < 60; i++) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const ds = d.toISOString().slice(0,10);
+        const count = Math.floor(Math.random() * 3);
+        for (let j = 0; j < count; j++) {
+          const cat = cats[Math.floor(Math.random() * cats.length)];
+          const catObj = catMap[cat];
+          txs.push({
+            id: uid(),
+            name: catObj.name + ' xarajati',
+            amount: Math.floor(Math.random() * 500000) + 20000,
+            type: 'expense',
+            category: cat,
+            date: ds,
+            time: `${String(Math.floor(Math.random()*12)+8).padStart(2,'0')}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}`,
+            note: '',
+            createdAt: d.toISOString(),
+          });
+        }
+      }
+
+      // Add incomes
+      for (let i = 0; i < 4; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 5);
+        txs.push({
+          id: uid(),
+          name: 'Oylik maosh',
+          amount: 5000000,
+          type: 'income',
+          category: 'maosh',
+          date: d.toISOString().slice(0,10),
+          time: '09:00',
+          note: 'Asosiy ish maoshi',
+          createdAt: d.toISOString(),
+        });
+      }
+
+      state.transactions = txs;
+      state.settings.startingBalance = 1000000;
+      state.budgets = [
+        { id: uid(), category: 'all', limit: 8000000 },
+        { id: uid(), category: 'oziq-ovqat', limit: 2000000 },
+        { id: uid(), category: 'transport', limit: 1000000 },
+      ];
+      state.savings = [
+        { id: uid(), name: 'Yangi telefon', target: 12000000, collected: 4500000, createdAt: now.toISOString() },
+        { id: uid(), name: 'Sayohat', target: 8000000, collected: 1200000, createdAt: now.toISOString() },
+      ];
+      saveState();
+      toast('Demo ma\'lumot yaratildi');
+      renderCurrentPage();
+    }
+
+    function clearAllData() {
+      if (!confirm('Barcha ma\'lumotlarni tozalashni tasdiqlaysizmi? Bu amalni qaytarib bo\'lmaydi.')) return;
+      state = defaultState();
+      saveState();
+      toast('Barcha ma\'lumotlar tozalandi');
+      navigateTo('dashboard');
+    }
+
+    // ========== BACKUP / RESTORE ==========
+    function downloadBackup() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pul-nazorat-backup-${todayStr()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast('Backup yuklab olindi');
+    }
+
+    function restoreBackup(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data || !Array.isArray(data.transactions)) throw new Error('Invalid format');
+          state = { ...defaultState(), ...data };
+          saveState();
+          toast('Ma\'lumotlar tiklandi');
+          navigateTo('dashboard');
+        } catch (err) {
+          toast('Noto\'g\'ri fayl formati', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ========== REPORTS ==========
+    function generateReport() {
+      const from = document.getElementById('reportFrom').value;
+      const to = document.getElementById('reportTo').value;
+      if (!from || !to) return toast('Sana oralig\'ini tanlang', 'error');
+      if (from > to) return toast('Boshlang\'ich sana oxirgi sanadan keyin bo\'lmasin', 'error');
+
+      const f = new Date(from);
+      const t = new Date(to);
+      t.setHours(23,59,59);
+      const txs = state.transactions.filter(tx => {
+        const d = new Date(tx.date);
+        return d >= f && d <= t;
+      });
+
+      const income = sumByType(txs, 'income');
+      const expense = sumByType(txs, 'expense');
+
+      document.getElementById('reportPreview').innerHTML = `
+        <h3 class="text-sm font-bold mb-16">Hisobot: ${from} — ${to}</h3>
+        <div class="stats-grid" style="margin-bottom:20px;">
+          <div class="stat-card"><div class="stat-label">Daromad</div><div class="stat-value positive">${fmt(income)}</div></div>
+          <div class="stat-card"><div class="stat-label">Xarajat</div><div class="stat-value negative">${fmt(expense)}</div></div>
+          <div class="stat-card"><div class="stat-label">Sof</div><div class="stat-value ${income-expense>=0?'positive':'negative'}">${fmt(income-expense)}</div></div>
+          <div class="stat-card"><div class="stat-label">Operatsiyalar</div><div class="stat-value">${txs.length}</div></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nomi</th><th>Turi</th><th>Kategoriya</th><th>Summa</th><th>Sana</th></tr></thead>
+            <tbody>
+              ${txs.sort((a,b)=>a.date.localeCompare(b.date)).map(tx => {
+                const cat = catMap[tx.category] || { name: tx.category };
+                return `<tr>
+                  <td>${tx.name}</td>
+                  <td><span class="badge ${tx.type==='income'?'badge-income':'badge-expense'}">${tx.type==='income'?'Daromad':'Xarajat'}</span></td>
+                  <td>${cat.name}</td>
+                  <td class="${tx.type==='income'?'text-primary':'text-danger'} font-bold">${tx.type==='income'?'+':'-'}${fmt(tx.amount)}</td>
+                  <td class="text-sm text-muted">${tx.date}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      toast('Hisobot yaratildi');
+    }
+
+    function exportCSV() {
+      const from = document.getElementById('reportFrom').value;
+      const to = document.getElementById('reportTo').value;
+      let txs = state.transactions;
+      if (from && to) {
+        const f = new Date(from); const t = new Date(to); t.setHours(23,59,59);
+        txs = txs.filter(tx => { const d = new Date(tx.date); return d >= f && d <= t; });
+      }
+      if (txs.length === 0) return toast('Eksport qilish uchun ma\'lumot yo\'q', 'warning');
+
+      const header = 'Nomi,Turi,Kategoriya,Summa,Sana,Vaqt,Izoh\n';
+      const rows = txs.map(tx => {
+        const cat = catMap[tx.category]?.name || tx.category;
+        return `"${tx.name}","${tx.type}","${cat}",${tx.amount},"${tx.date}","${tx.time||''}","${(tx.note||'').replace(/"/g,'""')}"`;
+      }).join('\n');
+      const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pul-nazorat-${from||'all'}-${to||'all'}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast('CSV yuklab olindi');
+    }
+
+    function printReport() {
+      window.print();
+    }
+
+    // ========== MOUSE LIGHT ==========
+    const mouseLight = document.getElementById('mouseLight');
+    document.addEventListener('mousemove', (e) => {
+      mouseLight.style.left = e.clientX + 'px';
+      mouseLight.style.top = e.clientY + 'px';
+    });
+
+    // ========== KEYBOARD SHORTCUTS ==========
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('txSearch')?.focus();
+      }
+      if (e.key === 'n' && !e.ctrlKey && !e.metaKey && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+        openTxModal();
+      }
+    });
+
+    // ========== MOBILE ==========
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('mobileOverlay').classList.toggle('active');
+    });
+    document.getElementById('mobileOverlay').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('mobileOverlay').classList.remove('active');
+    });
+
+    // ========== EVENT BINDINGS ==========
+    document.getElementById('quickAddBtn').addEventListener('click', () => openTxModal());
+    document.getElementById('addTxBtn').addEventListener('click', () => openTxModal());
+    document.getElementById('addExpenseBtn').addEventListener('click', () => openTxModal());
+    document.getElementById('addIncomeBtn').addEventListener('click', () => openTxModal());
+    document.getElementById('addBudgetBtn').addEventListener('click', () => openBudgetModal());
+    document.getElementById('addSavingsBtn').addEventListener('click', () => openSavingsModal());
+    document.getElementById('btnDemoData').addEventListener('click', generateDemoData);
+    document.getElementById('btnClearData').addEventListener('click', clearAllData);
+    document.getElementById('btnBackup').addEventListener('click', downloadBackup);
+    document.getElementById('btnRestore').addEventListener('click', () => document.getElementById('restoreInput').click());
+    document.getElementById('restoreInput').addEventListener('change', (e) => {
+      if (e.target.files[0]) restoreBackup(e.target.files[0]);
+      e.target.value = '';
+    });
+    document.getElementById('btnGenerateReport').addEventListener('click', generateReport);
+    document.getElementById('btnExportCSV').addEventListener('click', exportCSV);
+    document.getElementById('btnPrintReport').addEventListener('click', printReport);
+
+    // ========== INIT ==========
+    loadState();
+    lucide.createIcons();
+    renderDashboard();
+
+    // Set default report dates
+    const now = new Date();
+    document.getElementById('reportFrom').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+    document.getElementById('reportTo').value = todayStr();
+
+  </script>
+</body>
+</html>
